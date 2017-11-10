@@ -1,4 +1,5 @@
 class AccountsController < ApplicationController
+ # before_filter :authenticate_user!
   def new
     @account = Account.new
     @account.build_owner
@@ -9,20 +10,22 @@ class AccountsController < ApplicationController
     if @account.save
       sign_in(@account.owner)
       flash[:notice] = "Your account has been created."
+#      puts "Account created"
       redirect_to root_url(subdomain: @account.subdomain)
     else
       flash.now[:alert] = "Sorry, your account could not be created."
+#      puts "Account not created"
       render :new
     end
   end
 
   private
-  
+
   def account_params
     params.require(:account).permit(:name, :subdomain,
-      {owner_attributes: [
+      { owner_attributes: [
         :email, :password, :password_confirmation
-        ]}				   
+      ]}
     )
-  end 
+  end
 end
